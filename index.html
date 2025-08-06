@@ -2,660 +2,395 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>PulseMarkets | 펄스마켓 - 실시간 주식 테마 분석</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseMarkets - 실시간 시장 현황</title>
     <style>
-        /* 폰트 아이콘 대체 */
-        .icon-chart::before { content: '📊'; }
-        .icon-fire::before { content: '🔥'; }
-        .icon-star::before { content: '⭐'; }
-        .icon-news::before { content: '📰'; }
-        .icon-crown::before { content: '👑'; }
-        .icon-eye::before { content: '👀'; }
-        .icon-bell::before { content: '🔔'; }
-        .icon-bookmark::before { content: '🔖'; }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1d3a 100%);
-            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1d3a 50%, #2d1b69 100%);
+            color: white;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Header - 간소화 */
-        .header {
-            background: rgba(26, 29, 58, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.75rem 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1400px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00d4ff, #ff6b35, #7b68ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 1rem;
+        }
+
+        /* 시장 지수 틱커 */
+        .ticker-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ticker {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #00d4ff;
-        }
-
-        .logo .icon-chart {
-            font-size: 1.5rem;
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.8rem;
-            color: #10b981;
-            padding: 0.3rem 0.6rem;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 12px;
-        }
-
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .btn {
-            padding: 0.4rem 0.8rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.75rem;
+            animation: scroll 20s linear infinite;
             white-space: nowrap;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #00d4ff, #7c3aed);
-            color: white;
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            gap: 0.5rem;
+            flex-shrink: 0;
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+        .ticker-label {
+            font-weight: bold;
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* 메인 컨테이너 */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem;
+        .ticker-value.positive {
+            color: #00ff88;
         }
 
-        /* 알림 섹션 - FINUP 스타일 */
-        .notification-section {
-            background: linear-gradient(135deg, #00d4ff, #7c3aed);
-            color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 1rem;
+        .ticker-value.negative {
+            color: #ff4757;
         }
 
-        .notification-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
-        .btn-notify {
-            width: 100%;
-            background: white;
-            color: #7c3aed;
-            padding: 0.75rem;
-            font-weight: 700;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        /* 테마맵 섹션 - FINUP 완전 복사 */
-        .theme-section {
-            background: rgba(26, 29, 58, 0.8);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1.5rem;
+        /* 강세 테마 섹션 */
+        .themes-section {
+            margin-bottom: 2rem;
         }
 
         .section-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        /* FINUP 스타일 테마맵 - 정확한 복제 */
-        .theme-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-auto-rows: minmax(100px, auto);
-            gap: 2px;
-            background: #1a1d3a;
-            padding: 2px;
-            border-radius: 8px;
-        }
-
-        .theme-item {
-            background: #ef4444;
-            color: white;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-
-        .theme-item:active {
-            transform: scale(0.95);
-        }
-
-        /* 큰 박스들 */
-        .theme-item.large {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .theme-item.wide {
-            grid-column: span 2;
-        }
-
-        .theme-name {
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-        .theme-change {
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
-
-        .theme-item.large .theme-name {
-            font-size: 1.1rem;
-        }
-
-        .theme-item.large .theme-change {
             font-size: 1.5rem;
-        }
-
-        /* FINUP 실제 색상 스케일 */
-        .theme-red-1 { background: #ef4444; }
-        .theme-red-2 { background: #dc2626; }
-        .theme-red-3 { background: #b91c1c; }
-        .theme-orange-1 { background: #f97316; }
-        .theme-orange-2 { background: #ea580c; }
-        .theme-orange-3 { background: #c2410c; }
-        .theme-yellow { background: #eab308; }
-        .theme-green-1 { background: #22c55e; }
-        .theme-green-2 { background: #16a34a; }
-        .theme-blue { background: #3b82f6; }
-
-        /* 추천주 섹션 */
-        .recommendations-section {
-            background: rgba(26, 29, 58, 0.8);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .stock-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1rem;
             margin-bottom: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stock-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .stock-header {
+            color: #00d4ff;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .stock-name {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-        }
-
-        .stock-theme {
-            font-size: 0.8rem;
-            color: #b4b8cd;
-        }
-
-        .stock-price {
-            font-size: 1rem;
-            font-weight: 800;
-            text-align: right;
-        }
-
-        .stock-change {
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .stock-reason {
-            font-size: 0.85rem;
-            color: #b4b8cd;
-            line-height: 1.3;
-            margin-bottom: 1rem;
-        }
-
-        .stock-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            align-items: center;
             gap: 0.5rem;
         }
 
-        .btn-action {
-            padding: 0.6rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .theme-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-            font-size: 0.85rem;
         }
 
-        .btn-chart {
-            background: linear-gradient(45deg, #00d4ff, #0ea5e9);
-            color: white;
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
         }
 
-        .btn-detail {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .theme-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
-        /* 데스크톱 레이아웃 */
-        @media (min-width: 1024px) {
-            .content-wrapper {
-                display: grid;
-                grid-template-columns: 1fr 350px;
-                gap: 2rem;
-                align-items: start;
+        .theme-change {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        /* 추천 종목 섹션 */
+        .stocks-section {
+            margin-bottom: 2rem;
+        }
+
+        .stocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .stock-card {
+            background: linear-gradient(135deg, rgba(123, 104, 238, 0.1), rgba(255, 107, 53, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(123, 104, 238, 0.3);
+        }
+
+        .stock-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .stock-change {
+            font-size: 1rem;
+        }
+
+        .stock-change.positive {
+            color: #00ff88;
+        }
+
+        .stock-change.negative {
+            color: #ff4757;
+        }
+
+        /* 뉴스 섹션 */
+        .news-section {
+            margin-bottom: 2rem;
+        }
+
+        .news-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: translateX(10px);
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
             }
 
-            .theme-grid {
-                grid-template-columns: repeat(4, 1fr);
-                grid-auto-rows: 120px;
+            .header h1 {
+                font-size: 2rem;
             }
 
-            .theme-name {
+            .ticker-item {
+                padding: 0.75rem 1rem;
                 font-size: 0.9rem;
             }
 
+            .themes-grid,
+            .stocks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-card,
+            .stock-card,
+            .news-item {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .stock-price {
+                font-size: 1.3rem;
+            }
+
             .theme-change {
-                font-size: 1.2rem;
-            }
-
-            .theme-item.large .theme-name {
                 font-size: 1.1rem;
-            }
-
-            .theme-item.large .theme-change {
-                font-size: 1.5rem;
             }
         }
 
-        /* 중간 화면 */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .theme-grid {
-                grid-template-columns: repeat(3, 1fr);
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
             }
+
+            .ticker-item {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .stock-price {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo">
-                <span class="icon-chart"></span>
-                <span>PulseMarkets</span>
-            </div>
-            
-            <div class="user-actions">
-                <span class="live-indicator">
-                    <span class="live-dot"></span>
-                    <span>실시간</span>
-                </span>
-                <a href="#" class="btn btn-secondary">로그인</a>
-                <a href="#" class="btn btn-primary">
-                    <span class="icon-crown"></span>
-                    Pro
-                </a>
-            </div>
-        </div>
-    </header>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header fade-in">
+            <h1>PulseMarkets</h1>
+            <p>실시간 시장 현황 | 2025년 8월 6일</p>
+        </header>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="content-wrapper">
-            <div class="main-content">
-                <!-- Notification -->
-                <div class="notification-section">
-                    <div class="notification-title">
-                        <span class="icon-bell"></span>
-                        결과 알림 받기 (무료)
-                    </div>
-                    <button class="btn-notify" onclick="showNotificationAlert()">
-                        <span class="icon-bell"></span>
-                        결과 알림 받기 (무료)
-                    </button>
+        <!-- 시장 지수 틱커 -->
+        <div class="ticker-container fade-in">
+            <div class="ticker" id="marketTicker">
+                <div class="ticker-item">
+                    <span class="ticker-label">코스피</span>
+                    <span class="ticker-value positive">3,192.35 (+1.42%)</span>
                 </div>
-
-                <!-- 실시간 테마록 - FINUP 정확한 데이터 -->
-                <div class="theme-section">
-                    <h2 class="section-title">
-                        <span class="icon-fire"></span>
-                        실시간 테마록
-                    </h2>
-                    <div class="theme-grid" id="themeGrid">
-                        <!-- 실제 FINUP 데이터 기반 -->
-                    </div>
+                <div class="ticker-item">
+                    <span class="ticker-label">코스닥</span>
+                    <span class="ticker-value positive">796.49 (+1.59%)</span>
                 </div>
-            </div>
-
-            <div class="sidebar">
-                <!-- 추천주 -->
-                <div class="recommendations-section">
-                    <h3 class="section-title">
-                        <span class="icon-star"></span>
-                        실시간 검증 중인 추천주
-                    </h3>
-                    <div id="recommendedStocks">
-                        <!-- 추천주 -->
-                    </div>
+                <div class="ticker-item">
+                    <span class="ticker-label">나스닥</span>
+                    <span class="ticker-value positive">21,053.58 (+1.95%)</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-label">S&P500</span>
+                    <span class="ticker-value positive">6,329.94 (+1.47%)</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-label">USD/KRW</span>
+                    <span class="ticker-value positive">1,390.00 (+0.58%)</span>
                 </div>
             </div>
         </div>
+
+        <!-- 강세 테마 섹션 -->
+        <section class="themes-section fade-in">
+            <h2 class="section-title">🔥 오늘의 강세 테마</h2>
+            <div class="themes-grid">
+                <div class="theme-card">
+                    <div class="theme-name">2차전지-소재/부품 <small style="font-size:0.8rem; color:#a0a0a0;">(에코프로비엠 +2.8%, LG화학 +1.5%)</small></div>
+                    <div class="theme-change">+15.33%</div>
+                </div>
+                <div class="theme-card">
+                    <div class="theme-name">STO(증권형 토큰) <small style="font-size:0.8rem; color:#a0a0a0;">(케이옥션 +8.4%, 핀거 +7.2%)</small></div>
+                    <div class="theme-change">+9.90%</div>
+                </div>
+                <div class="theme-card">
+                    <div class="theme-name">로봇 <small style="font-size:0.8rem; color:#a0a0a0;">(레인보우로보틱스 +3.8%, 로보스타 +12.1%)</small></div>
+                    <div class="theme-change">+9.21%</div>
+                </div>
+                <div class="theme-card">
+                    <div class="theme-name">조선 <small style="font-size:0.8rem; color:#a0a0a0;">(한화오션 +4.2%, HD한국조선해양 +5.8%)</small></div>
+                    <div class="theme-change">+8.44%</div>
+                </div>
+                <div class="theme-card">
+                    <div class="theme-name">방산-항공우주 <small style="font-size:0.8rem; color:#a0a0a0;">(한화에어로스페이스 +2.4%, 한화시스템 +3.1%)</small></div>
+                    <div class="theme-change">+5.95%</div>
+                </div>
+                <div class="theme-card">
+                    <div class="theme-name">AI-반도체 <small style="font-size:0.8rem; color:#a0a0a0;">(SK하이닉스 +2.1%, 삼성전자 +0.3%)</small></div>
+                    <div class="theme-change">+5.29%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 추천 종목 섹션 -->
+        <section class="stocks-section fade-in">
+            <h2 class="section-title">⭐ 주요 종목</h2>
+            <div class="stocks-grid">
+                <div class="stock-card">
+                    <div class="stock-name">에코프로비엠</div>
+                    <div class="stock-price">380,000원</div>
+                    <div class="stock-change positive">+2.84% (+10,500원)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-name">SK하이닉스</div>
+                    <div class="stock-price">268,000원</div>
+                    <div class="stock-change positive">+2.13% (+5,600원)</div>
+                </div>
+                <div class="stock-card">
+                    <div class="stock-name">두산에너빌리티</div>
+                    <div class="stock-price">66,300원</div>
+                    <div class="stock-change positive">+2.31% (+1,500원)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 뉴스 섹션 -->
+        <section class="news-section fade-in">
+            <h2 class="section-title">📰 주요 뉴스</h2>
+            <div class="news-item">
+                <div class="news-title">코스피 3190선 회복...외국인 매수세에 상승 마감</div>
+            </div>
+            <div class="news-item">
+                <div class="news-title">STO 법안 국회 논의 본격화...증권형 토큰 테마주 급등</div>
+            </div>
+            <div class="news-item">
+                <div class="news-title">2차전지·AI반도체 동반 상승...기술주 랠리 지속</div>
+            </div>
+        </section>
     </div>
 
     <script>
-        console.log('🚀 PulseMarkets FINUP 스타일 버전 시작!');
-
-        // 실제 FINUP 데이터 (2025-08-05 15:39 기준)
-        const realThemeData = [
-            { name: "2차전지-소재/부품", change: "+15.47%", rank: 1, size: "large", color: "theme-red-1" },
-            { name: "조선/LNG선", change: "+11.93%", rank: 2, size: "large", color: "theme-red-2" },
-            { name: "가상화폐(비트코인)", change: "+9.4%", rank: 3, size: "normal", color: "theme-orange-1" },
-            { name: "비만치료제", change: "+9.15%", rank: 4, size: "normal", color: "theme-orange-1" },
-            { name: "STO(증권형 토큰)", change: "+8.97%", rank: 5, size: "wide", color: "theme-orange-2" },
-            { name: "ESS(전력저장장치)", change: "+8.17%", rank: 6, size: "normal", color: "theme-orange-2" },
-            { name: "2차전지-폐배터리", change: "+8.12%", rank: 7, size: "normal", color: "theme-orange-2" },
-            { name: "화장품", change: "+8.11%", rank: 8, size: "normal", color: "theme-orange-2" },
-            { name: "의료기기", change: "+8.08%", rank: 9, size: "normal", color: "theme-orange-2" },
-            { name: "풍력", change: "+8.9%", rank: 10, size: "normal", color: "theme-orange-2" },
-            { name: "전기차 부품", change: "+8.02%", rank: 11, size: "normal", color: "theme-orange-3" },
-            { name: "2차전지-전고체배터리", change: "+7.94%", rank: 12, size: "wide", color: "theme-orange-3" },
-            { name: "조선기자재", change: "+7.6%", rank: 13, size: "normal", color: "theme-yellow" },
-            { name: "유전자치료", change: "+7.52%", rank: 14, size: "normal", color: "theme-yellow" },
-            { name: "로봇", change: "+8.24%", rank: 15, size: "normal", color: "theme-orange-2" },
-            { name: "코로나 치료제", change: "+7.31%", rank: 16, size: "normal", color: "theme-yellow" },
-            { name: "VR(가상현실)", change: "-7.31%", rank: 17, size: "normal", color: "theme-blue" },
-            { name: "AI(인공지능)", change: "-8.11%", rank: 18, size: "large", color: "theme-blue" }
-        ];
-
-        // 실제 강세 종목 데이터
-        const realStockData = [
-            {
-                name: "신흥에스이씨",
-                price: "5,000",
-                change: "+23.46%",
-                theme: "2차전지-소재/부품",
-                reason: "2차전지 소재 테마 1위, 거래대금 985억원으로 급등"
-            },
-            {
-                name: "에코프로비엠", 
-                price: "124,500",
-                change: "+15.28%",
-                theme: "2차전지-소재/부품",
-                reason: "2차전지 대장주, 거래대금 3,876억원 폭증"
-            },
-            {
-                name: "LS에코에너지",
-                price: "41,350", 
-                change: "+15.34%",
-                theme: "2차전지-소재/부품",
-                reason: "2차전지 소재 급등세, 거래대금 478억원"
-            }
-        ];
-
-        // 색상 결정 함수
-        function getThemeColor(changePercent) {
-            if (changePercent >= 15) return 'theme-red-1';
-            if (changePercent >= 12) return 'theme-red-2';
-            if (changePercent >= 10) return 'theme-red-3';
-            if (changePercent >= 9) return 'theme-orange-1';
-            if (changePercent >= 8) return 'theme-orange-2';
-            if (changePercent >= 7) return 'theme-orange-3';
-            if (changePercent >= 5) return 'theme-yellow';
-            if (changePercent >= 0) return 'theme-green-1';
-            if (changePercent >= -5) return 'theme-green-2';
-            return 'theme-blue';
-        }
-
-        // FINUP 스타일 테마맵 생성
-        function populateThemeGrid() {
-            const container = document.getElementById('themeGrid');
-            if (!container) return;
+        // 간단한 틱커 애니메이션만 유지
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 PulseMarkets 로딩 완료');
             
-            container.innerHTML = '';
-            
-            realThemeData.forEach(theme => {
-                const themeItem = document.createElement('div');
-                const changePercent = parseFloat(theme.change.replace('%', '').replace('+', ''));
-                
-                themeItem.className = `theme-item ${theme.size} ${getThemeColor(changePercent)}`;
-                
-                themeItem.innerHTML = `
-                    <div class="theme-name">${theme.name}</div>
-                    <div class="theme-change">${theme.change}</div>
-                `;
-                
-                themeItem.addEventListener('click', () => {
-                    showThemeDetail(theme.name, theme.change, theme.rank);
-                });
-                
-                container.appendChild(themeItem);
+            // 페이드인 애니메이션 적용
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
             });
-        }
+        });
 
-        // 추천주 생성
-        function populateRecommendedStocks() {
-            const container = document.getElementById('recommendedStocks');
-            if (!container) return;
-            
-            container.innerHTML = '';
-
-            realStockData.forEach(stock => {
-                const stockCard = document.createElement('div');
-                stockCard.className = 'stock-card';
-                
-                const changeColor = stock.change.startsWith('+') ? '#10b981' : '#ef4444';
-                
-                stockCard.innerHTML = `
-                    <div class="stock-header">
-                        <div>
-                            <div class="stock-name">${stock.name}</div>
-                            <div class="stock-theme">${stock.theme}</div>
-                        </div>
-                        <div>
-                            <div class="stock-price" style="color: ${changeColor}">${stock.price}</div>
-                            <div class="stock-change" style="color: ${changeColor}">${stock.change}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stock-reason">${stock.reason}</div>
-                    
-                    <div class="stock-actions">
-                        <button class="btn-action btn-chart" onclick="showChart('${stock.name}', '${stock.price}', '${stock.change}')">
-                            <span class="icon-chart"></span> 차트
-                        </button>
-                        <button class="btn-action btn-detail" onclick="addToWatchlist('${stock.name}')">
-                            <span class="icon-bookmark"></span> 관심등록
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(stockCard);
-            });
-        }
-
-        // 실시간 업데이트 (FINUP 데이터 기반)
-        function updateRealTimeData() {
-            // 실제 FINUP 데이터 기반으로 소폭 변동만
-            realThemeData.forEach(theme => {
-                const currentChange = parseFloat(theme.change.replace('%', '').replace('+', ''));
-                const randomChange = (Math.random() - 0.5) * 0.1; // 매우 작은 변동
-                const newChange = currentChange + randomChange;
-                theme.change = `${newChange >= 0 ? '+' : ''}${newChange.toFixed(2)}%`;
-                theme.color = getThemeColor(newChange);
-            });
-            
-            realStockData.forEach(stock => {
-                const priceChange = (Math.random() - 0.5) * 0.005; // 0.5% 이내
-                const currentPrice = parseInt(stock.price.replace(',', ''));
-                const newPrice = Math.max(1000, currentPrice * (1 + priceChange));
-                stock.price = Math.floor(newPrice).toLocaleString();
-                
-                const changePercent = (Math.random() - 0.3) * 0.5; // 작은 변동
-                const currentPercent = parseFloat(stock.change.replace('%', '').replace('+', ''));
-                const newPercent = currentPercent + changePercent;
-                stock.change = `${newPercent >= 0 ? '+' : ''}${newPercent.toFixed(2)}%`;
-            });
-            
-            populateThemeGrid();
-            populateRecommendedStocks();
-            
-            // 10초마다 업데이트
-            setTimeout(updateRealTimeData, 10000);
-        }
-
-        // 인터랙션 함수들
-        function showThemeDetail(themeName, themeChange, rank) {
-            alert(`🔥 ${themeName}\n등락률: ${themeChange}\n랭킹: ${rank}위\n\n실제 FINUP 데이터를 기반으로 합니다.\n\n📊 관련 종목, 뉴스, 차트 분석\n💡 매수/매도 시점 알림\n📈 수익률 목표 설정`);
-        }
-
-        function showChart(stockName, price, change) {
-            alert(`📊 ${stockName} 차트 분석\n\n현재가: ${price}\n변동률: ${change}\n\n실제 서비스에서는:\n✅ TradingView 전문 차트\n✅ 기술적 분석 지표\n✅ 매매 신호 알림\n✅ 목표가 설정`);
-        }
-
-        function addToWatchlist(stockName) {
-            alert(`🔖 ${stockName} 관심 등록 완료!\n\n✅ 관심 종목으로 등록되었습니다\n📊 실시간 수익률 추적 시작\n📧 중요 변동 시 푸시 알림\n💡 매매 타이밍 알림`);
-        }
-
-        function showNotificationAlert() {
-            alert(`📧 결과 알림 신청 완료!\n\n실제 FINUP 데이터 기반으로:\n✅ 2차전지-소재/부품 +15.47% (1위)\n✅ 조선/LNG선 +11.93% (2위)\n✅ 정확한 실시간 데이터 제공\n\n💡 북마크해두고 확인해보세요!`);
-        }
-
-        // 앱 초기화
-        function initializeApp() {
-            console.log('🎯 PulseMarkets FINUP 스타일 초기화!');
-            
-            try {
-                populateThemeGrid();
-                populateRecommendedStocks();
-                
-                // 실시간 업데이트 시작
-                setTimeout(() => {
-                    updateRealTimeData();
-                    console.log('✅ 실시간 FINUP 데이터 업데이트 시작!');
-                }, 3000);
-                
-                // 환영 메시지
-                setTimeout(() => {
-                    if (Math.random() < 0.4) {
-                        alert('🎯 PulseMarkets Finviz 스타일!\n\n🎨 새로운 디자인:\n• FINUP 크기 + Finviz 색상\n• 작고 깔끔한 블록 디자인\n• 한눈에 파악 가능한 레이아웃\n\n📊 실제 데이터:\n• 2차전지-소재/부품 +15.47%\n• 조선/LNG선 +11.93%\n\n📱 터치로 상세정보 확인!');
-                    }
-                }, 3000);
-                
-                console.log('✅ FINUP 스타일 초기화 완료!');
-                
-            } catch (error) {
-                console.error('❌ 초기화 오류:', error);
-            }
-        }
-
-        // 앱 시작
-        document.addEventListener('DOMContentLoaded', initializeApp);
-        
-        console.log('📋 PulseMarkets FINUP x Finviz 스타일 스크립트 로드 완료');
+        // 모바일 터치 최적화
+        document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 </body>
 </html>
