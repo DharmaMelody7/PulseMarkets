@@ -5,33 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>PulseMarkets | 펄스마켓 - 실시간 주식 테마 분석</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background: #0a0e27;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27, #1a1d3a);
       color: white;
-      text-align: center;
-      padding: 2rem;
+      padding: 1rem;
     }
-    h1 {
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
       color: #00d4ff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .theme {
+    .section {
       margin-top: 2rem;
+    }
+    .section-title {
       font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+    .theme-item {
+      background: #ef4444;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .theme-item:hover {
+      transform: scale(1.05);
+      background: #dc2626;
+    }
+    .recommendation {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+    .stock-name { font-size: 1.1rem; font-weight: bold; }
+    .stock-change { font-weight: bold; margin-top: 0.25rem; }
+    @media (max-width: 600px) {
+      .logo { font-size: 1.2rem; }
+      .section-title { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <h1>🎯 PulseMarkets</h1>
-  <p>실시간 주식 테마맵을 GitHub Pages로 테스트 중입니다.</p>
+  <div class="logo">📊 PulseMarkets</div>
 
-  <div class="theme">
-    <strong>테마 예시:</strong><br />
-    2차전지 +15.47%<br />
-    조선/LNG선 +11.93%<br />
-    AI(인공지능) -8.11%
+  <div class="section">
+    <div class="section-title">🔥 실시간 테마맵</div>
+    <div class="theme-grid">
+      <div class="theme-item">2차전지<br>+15.47%</div>
+      <div class="theme-item">조선/LNG선<br>+11.93%</div>
+      <div class="theme-item">비만치료제<br>+9.15%</div>
+      <div class="theme-item">ESS<br>+8.17%</div>
+      <div class="theme-item">AI(인공지능)<br>-8.11%</div>
+    </div>
   </div>
-  <p style="margin-top: 3rem; font-size: 0.8rem;">(이 페이지는 테스트용입니다)</p>
+
+  <div class="section">
+    <div class="section-title">⭐ 실시간 검증 중인 추천주</div>
+
+    <div class="recommendation">
+      <div class="stock-name">신흥에스이씨</div>
+      <div>2차전지-소재/부품</div>
+      <div class="stock-change" style="color:#10b981;">+23.46%</div>
+      <div>2차전지 테마 1위, 거래대금 985억</div>
+    </div>
+
+    <div class="recommendation">
+      <div class="stock-name">에코프로비엠</div>
+      <div>2차전지 대장주</div>
+      <div class="stock-change" style="color:#10b981;">+15.28%</div>
+      <div>거래대금 3,876억 폭증</div>
+    </div>
+
+    <div class="recommendation">
+      <div class="stock-name">LS에코에너지</div>
+      <div>급등주</div>
+      <div class="stock-change" style="color:#10b981;">+15.34%</div>
+      <div>소재 급등세, 거래대금 478억</div>
+    </div>
+  </div>
 </body>
 </html>
+
